@@ -1,7 +1,7 @@
 import { converter, db } from "./common";
 
-import Carrier from "@models/carrier";
-import Load from "@models/load";
+import Carrier from "../models/carrier";
+import Load from "../models/load";
 
 export default class CarrierService {
   private static instance: CarrierService;
@@ -15,22 +15,25 @@ export default class CarrierService {
     return this.instance;
   }
 
-  private constructor(){};
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  private constructor() {}
 
-  async getById(id: string) {
+  async getById(id: string): Promise<Carrier> {
     try {
       const doc = await db
-      .collection("carriers")
-      .withConverter(converter<Carrier>())
-      .doc(id)
-      .get();
+        .collection("carriers")
+        .withConverter(converter<Carrier>())
+        .doc(id)
+        .get();
 
-    return doc.data();  
+      return doc.data() || {} as Carrier;
     } catch (error) {
       let errorMessage = `Error trying to getCarrierById:${id}`;
 
-      if (error instanceof Error)
-        errorMessage = `${errorMessage}, err:${error.message}, stack:${error.stack}`;
+      if (error instanceof Error) {
+        errorMessage =
+        `${errorMessage}, err:${error.message}, stack:${error.stack}`;
+      }
 
       throw new Error(errorMessage);
     }
@@ -42,43 +45,47 @@ export default class CarrierService {
         .where("carrierId", "==", carrierId)
         .get();
       if (loadDocs.empty) return [];
-  
+
       const loads: Load[] = [];
       loadDocs.forEach((doc) => loads.push(doc.data()));
       return loads;
     } catch (error) {
       let errorMessage = `Error trying to getLoads by carrierId:${carrierId}`;
 
-      if (error instanceof Error)
-        errorMessage = `${errorMessage}, err:${error.message}, stack:${error.stack}`;
+      if (error instanceof Error) {
+        errorMessage =
+        `${errorMessage}, err:${error.message}, stack:${error.stack}`;
+      }
 
       throw new Error(errorMessage);
     }
   }
 
-  async getActiveLoads(carrierId: string) {
-    // const loadDocs = this.withLoads().where("carrierId", "==", carrierId);
-  }
+  // async getActiveLoads(carrierId: string) {
+  //   // const loadDocs = this.withLoads().where("carrierId", "==", carrierId);
+  // }
 
-  async createCarrier(carrier: Carrier) {
+  async createCarrier(carrier: Carrier): Promise<string> {
     try {
       return this.writeNewCarrier(carrier);
     } catch (error) {
-      let errorMessage = 'Error trying to createCarrier';
+      let errorMessage = "Error trying to createCarrier";
 
-      if (error instanceof Error)
-        errorMessage = `${errorMessage}, err:${error.message}, stack:${error.stack}`;
+      if (error instanceof Error) {
+        errorMessage =
+        `${errorMessage}, err:${error.message}, stack:${error.stack}`;
+      }
 
       throw new Error(errorMessage);
     }
   }
 
-  withLoads() {
+  withLoads(): FirebaseFirestore.CollectionReference<Load> {
     return db.collection("loads").withConverter(converter<Load>());
   }
 
-  private async writeNewCarrier(carrier: Carrier) {
-    carrier.id = db.collection('carriers').doc().id;
+  private async writeNewCarrier(carrier: Carrier): Promise<string> {
+    carrier.id = db.collection("carriers").doc().id;
     await db.doc(`carriers/${carrier.id}`).set(carrier);
     return carrier.id;
   }

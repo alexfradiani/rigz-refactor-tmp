@@ -1,18 +1,18 @@
-import { Request, Response, Router } from 'express';
-import Carrier from '@models/carrier';
-import Load from '@models/load';
-import CarrierService from '@services/carrier';
+import { Request, Response, Router } from "express";
+import Carrier from "../models/carrier";
+import Load from "../models/load";
+import CarrierService from "../services/carrier";
 
 export class CarrierController {
   private readonly carrierService: CarrierService;
   constructor() {
-    this.carrierService = CarrierService.getInstance()
-  };
+    this.carrierService = CarrierService.getInstance();
+  }
 
-  routes(router: Router) {
-    router.get('/:carrierId', (req, res) => this.getById(req, res));
-    router.get('/:carrierId/getLoads', (req, res) => this.getLoads(req, res));
-    router.post('', (req, res) => this.createCarrier(req, res));
+  routes(router: Router): Router {
+    router.get("/:carrierId", (req, res) => this.getById(req, res));
+    router.get("/:carrierId/getLoads", (req, res) => this.getLoads(req, res));
+    router.post("", (req, res) => this.createCarrier(req, res));
 
     return router;
   }
@@ -27,7 +27,6 @@ export class CarrierController {
     const result = await this.carrierService.getById(req.params.carrierId);
 
     return res.json(result);
-
   }
 
   async createCarrier(req: Request, res: Response): Promise<Response<number>> {

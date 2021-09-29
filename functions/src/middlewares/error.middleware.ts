@@ -1,9 +1,9 @@
-import { Response } from 'express';
+import { Response } from "express";
 
 export class ErrorMiddleware {
-  static handler(err: any, res: Response) {
+  static handler(err: unknown, res: Response): void {
     if (err instanceof ApiError) {
-      res.status(500); //Check with Alex
+      res.status(500); // Check with Alex
       res.send(err);
     } else {
       res.sendStatus(500); // other unhandled error
