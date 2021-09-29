@@ -4,6 +4,19 @@ import Carrier from "../models/carrier";
 import Load from "../models/load";
 
 export default class CarrierService {
+  private static instance: CarrierService;
+
+
+  public static getInstance(): CarrierService {
+    if (!this.instance) {
+      this.instance = new CarrierService();
+    }
+
+    return this.instance;
+  }
+
+  private constructor(){};
+
   async getById(id: string) {
     const doc = await db
       .collection("carriers")
@@ -26,7 +39,7 @@ export default class CarrierService {
   }
 
   async getActiveLoads(carrierId: string) {
-    const loadDocs = this.withLoads().where("carrierId", "==", carrierId);
+    // const loadDocs = this.withLoads().where("carrierId", "==", carrierId);
   }
 
   withLoads() {

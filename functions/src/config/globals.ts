@@ -1,0 +1,4 @@
+export const RATELIMIT = {
+  WINDOW: 900000,
+  MAX_REQUESTS: 10
+}
