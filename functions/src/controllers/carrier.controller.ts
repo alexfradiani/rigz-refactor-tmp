@@ -1,4 +1,4 @@
-import express from 'express';
+import { Request, Response, Router } from 'express';
 import Load from '../models/load';
 import CarrierService from '../services/carrier';
 
@@ -8,17 +8,19 @@ export class CarrierController {
     this.carrierService = CarrierService.getInstance()
   };
 
-  public routes() {
-    const router = express.Router();
-    router.get('/getLoads', (req, res) => {
-      const carrierId = req.query.carrierId as string;
-      res.json(this.getLoads(carrierId));
-    });
+  routes(router: Router) {
+    router.get('/getLoads', (req, res) => this.getLoads2(req,res));
+
+    return router;
   }
 
-  async getLoads(carrierId: string): Promise<Load[]> {
-    console.log(`Estamos aqui ${carrierId}`);
-    const result = await this.carrierService.getLoads(carrierId);
-    return result;
+  async getLoads2(req: Request, res: Response): Promise<Response<Load[]>> {
+    try {
+      const carrierId = req.query.carrierId as string;
+      const result = await this.carrierService.getLoads(carrierId);
+      return res.json(result);  
+    } catch (error) {
+      throw new Error('Error trying to getLoads');
+    }
   }
 }

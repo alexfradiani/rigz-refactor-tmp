@@ -1,13 +1,14 @@
-const express = require('express');
-
-
+import { Request, Response, Router } from 'express';
 import { CarrierController } from './carrier.controller';
 
-export const controllers = [ CarrierController ];
 
-export const routes = () => {
-  const app = express();
+export const routes = (router: Router) => {
+  router.get('/test', (req: Request, res: Response) => {
+    res.json(`complete ${req.path}`);
+  });
 
   const carrierCtrl = new CarrierController();
-  app.use('/carriers', carrierCtrl.routes);
+  router.use('/carriers', carrierCtrl.routes(router));
+  
+  return router;
 }
