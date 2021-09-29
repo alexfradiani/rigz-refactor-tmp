@@ -3,9 +3,9 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import { RATE_LIMIT_WINDOW, RATE_LIMIT_MAX_REQUESTS } from './config/index';
-import { routes } from './controllers';
-import { ErrorMiddleware } from './middlewares/error.middleware';
+import { RATE_LIMIT_WINDOW, RATE_LIMIT_MAX_REQUESTS } from '@config';
+import { routes } from '@controllers';
+import { ErrorMiddleware } from '@middlewares/error.middleware';
 
 
 export const app = express();

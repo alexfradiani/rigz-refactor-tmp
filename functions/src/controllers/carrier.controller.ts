@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
-import Carrier from '../models/carrier';
-import Load from '../models/load';
-import CarrierService from '../services/carrier';
+import Carrier from '@models/carrier';
+import Load from '@models/load';
+import CarrierService from '@services/carrier';
 
 export class CarrierController {
   private readonly carrierService: CarrierService;

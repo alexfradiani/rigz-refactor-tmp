@@ -1,7 +1,7 @@
 import { converter, db } from "./common";
 
-import Carrier from "../models/carrier";
-import Load from "../models/load";
+import Carrier from "@models/carrier";
+import Load from "@models/load";
 
 export default class CarrierService {
   private static instance: CarrierService;
