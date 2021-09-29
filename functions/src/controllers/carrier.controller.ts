@@ -1,4 +1,5 @@
 import { Request, Response, Router } from 'express';
+import Carrier from '../models/carrier';
 import Load from '../models/load';
 import CarrierService from '../services/carrier';
 
@@ -9,18 +10,30 @@ export class CarrierController {
   };
 
   routes(router: Router) {
-    router.get('/getLoads', (req, res) => this.getLoads2(req,res));
+    router.get('/:carrierId', (req, res) => this.getById(req, res));
+    router.get('/:carrierId/getLoads', (req, res) => this.getLoads(req, res));
+    router.post('', (req, res) => this.createCarrier(req, res));
 
     return router;
   }
 
-  async getLoads2(req: Request, res: Response): Promise<Response<Load[]>> {
-    try {
-      const carrierId = req.query.carrierId as string;
-      const result = await this.carrierService.getLoads(carrierId);
-      return res.json(result);  
-    } catch (error) {
-      throw new Error('Error trying to getLoads');
-    }
+  async getLoads(req: Request, res: Response): Promise<Response<Load[]>> {
+    const result = await this.carrierService.getLoads(req.params.carrierId);
+
+    return res.json(result);
+  }
+
+  async getById(req: Request, res: Response): Promise<Response<Carrier>> {
+    const result = await this.carrierService.getById(req.params.carrierId);
+
+    return res.json(result);
+
+  }
+
+  async createCarrier(req: Request, res: Response): Promise<Response<number>> {
+    const carrierRequest = req.body as Carrier;
+    const result = await this.carrierService.createCarrier(carrierRequest);
+
+    return res.json(result);
   }
 }

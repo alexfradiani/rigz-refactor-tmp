@@ -18,31 +18,68 @@ export default class CarrierService {
   private constructor(){};
 
   async getById(id: string) {
-    const doc = await db
+    try {
+      const doc = await db
       .collection("carriers")
       .withConverter(converter<Carrier>())
       .doc(id)
       .get();
 
-    return doc.data();
+    return doc.data();  
+    } catch (error) {
+      let errorMessage = `Error trying to getCarrierById:${id}`;
+
+      if (error instanceof Error)
+        errorMessage = `${errorMessage}, err:${error.message}, stack:${error.stack}`;
+
+      throw new Error(errorMessage);
+    }
   }
 
-  async getLoads(carrierId: string) {
-    const loadDocs = await this.withLoads()
-      .where("carrierId", "==", carrierId)
-      .get();
-    if (loadDocs.empty) return [];
+  async getLoads(carrierId: string): Promise<Load[]> {
+    try {
+      const loadDocs = await this.withLoads()
+        .where("carrierId", "==", carrierId)
+        .get();
+      if (loadDocs.empty) return [];
+  
+      const loads: Load[] = [];
+      loadDocs.forEach((doc) => loads.push(doc.data()));
+      return loads;
+    } catch (error) {
+      let errorMessage = `Error trying to getLoads by carrierId:${carrierId}`;
 
-    const loads: Load[] = [];
-    loadDocs.forEach((doc) => loads.push(doc.data()));
-    return loads;
+      if (error instanceof Error)
+        errorMessage = `${errorMessage}, err:${error.message}, stack:${error.stack}`;
+
+      throw new Error(errorMessage);
+    }
   }
 
   async getActiveLoads(carrierId: string) {
     // const loadDocs = this.withLoads().where("carrierId", "==", carrierId);
   }
 
+  async createCarrier(carrier: Carrier) {
+    try {
+      return this.writeNewCarrier(carrier);
+    } catch (error) {
+      let errorMessage = 'Error trying to createCarrier';
+
+      if (error instanceof Error)
+        errorMessage = `${errorMessage}, err:${error.message}, stack:${error.stack}`;
+
+      throw new Error(errorMessage);
+    }
+  }
+
   withLoads() {
     return db.collection("loads").withConverter(converter<Load>());
+  }
+
+  private async writeNewCarrier(carrier: Carrier) {
+    carrier.id = db.collection('carriers').doc().id;
+    await db.doc(`carriers/${carrier.id}`).set(carrier);
+    return carrier.id;
   }
 }
