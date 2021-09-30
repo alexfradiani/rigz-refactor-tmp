@@ -1,11 +1,11 @@
-import { converter, db } from "./common";
-
 import Carrier from "../models/carrier";
+import { CollectionReference } from "@google-cloud/firestore";
 import Load from "../models/load";
+import { db } from "./common";
 
 export default class CarrierService {
   private static instance: CarrierService;
-
+  private constructor() {}
 
   public static getInstance(): CarrierService {
     if (!this.instance) {
@@ -15,9 +15,6 @@ export default class CarrierService {
     return this.instance;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  private constructor() {}
-
   async getById(id: string): Promise<Carrier> {
     try {
       const doc = await db
@@ -26,13 +23,13 @@ export default class CarrierService {
         .doc(id)
         .get();
 
-      return doc.data() || {} as Carrier;
+      return doc.data() || ({} as Carrier);
     } catch (error) {
       let errorMessage = `Error trying to getCarrierById:${id}`;
 
       if (error instanceof Error) {
-        errorMessage =
-        `${errorMessage}, err:${error.message}, stack:${error.stack}`;
+        errorMessage = `${errorMessage},
+          err:${error.message}, stack:${error.stack}`;
       }
 
       throw new Error(errorMessage);
@@ -53,40 +50,32 @@ export default class CarrierService {
       let errorMessage = `Error trying to getLoads by carrierId:${carrierId}`;
 
       if (error instanceof Error) {
-        errorMessage =
-        `${errorMessage}, err:${error.message}, stack:${error.stack}`;
+        errorMessage = `${errorMessage}, err:${error.message},
+          stack:${error.stack}`;
       }
 
       throw new Error(errorMessage);
     }
   }
 
-  // async getActiveLoads(carrierId: string) {
-  //   // const loadDocs = this.withLoads().where("carrierId", "==", carrierId);
-  // }
-
   async createCarrier(carrier: Carrier): Promise<string> {
     try {
-      return this.writeNewCarrier(carrier);
+      // TODO: finish write process
+      return carrier.name;
     } catch (error) {
       let errorMessage = "Error trying to createCarrier";
 
       if (error instanceof Error) {
-        errorMessage =
-        `${errorMessage}, err:${error.message}, stack:${error.stack}`;
+        errorMessage = `${errorMessage}, err:${error.message},
+          stack:${error.stack}`;
       }
 
       throw new Error(errorMessage);
     }
   }
 
-  withLoads(): FirebaseFirestore.CollectionReference<Load> {
-    return db.collection("loads").withConverter(converter<Load>());
-  }
-
-  private async writeNewCarrier(carrier: Carrier): Promise<string> {
-    carrier.id = db.collection("carriers").doc().id;
-    await db.doc(`carriers/${carrier.id}`).set(carrier);
-    return carrier.id;
+  withLoads(): CollectionReference<Load> {
+    // TODO: link with converter
+    // return db.collection("loads").withConverter(converter<Load>());
   }
 }
