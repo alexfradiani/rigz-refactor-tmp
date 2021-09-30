@@ -8,7 +8,3 @@ admin.initializeApp({
 });
 
 export const db = admin.firestore();
-
-export interface WithId {
-  id: string;
-}
