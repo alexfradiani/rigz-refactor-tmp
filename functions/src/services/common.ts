@@ -9,14 +9,15 @@ admin.initializeApp({
 
 export const db = admin.firestore();
 
-export interface WithId {
+export interface ModelInterface {
   id: string;
+  init: () => void;
 }
 
 /**
  * Generic Converter to integrate TS Objects with Firestore Documents
  */
-export const converter = <T extends WithId>() => ({
+export const converter = <T extends ModelInterface>() => ({
   toFirestore: (data: T) => data,
   fromFirestore: (snap: FirebaseFirestore.QueryDocumentSnapshot) => {
     const t = snap.data() as T;

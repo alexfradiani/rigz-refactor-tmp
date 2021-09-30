@@ -18,9 +18,9 @@ import CarrierService from "./services/carrier";
 // };
 // usingService();
 
-const getCarrierLoads = async () => {
+const getProcessing = async () => {
   const carrierSvc = new CarrierService();
-  const loads = await carrierSvc.getLoads("XBu7gNABc1MEJKdACtzC");
-  console.log(loads);
+  const records = await carrierSvc.getProcessing();
+  console.dir(records, { depth: null });
 };
-getCarrierLoads();
+getProcessing();
