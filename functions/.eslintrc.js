@@ -32,6 +32,7 @@ module.exports = {
     indent: ["error", 2],
     "new-cap": 0,
     "no-empty-function": "off",
-    "@typescript-eslint/no-empty-function": "off"
+    "@typescript-eslint/no-empty-function": "off",
+    "valid-jsdoc": "off"
   }
 };

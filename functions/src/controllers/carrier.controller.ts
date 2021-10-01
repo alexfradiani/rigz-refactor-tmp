@@ -1,7 +1,8 @@
 import { Request, Response, Router } from "express";
+
 import Carrier from "../models/carrier";
-import Load from "../models/load";
 import CarrierService from "../services/carrier";
+import Load from "../models/load";
 
 export class CarrierController {
   private readonly carrierService: CarrierService;
@@ -10,11 +11,18 @@ export class CarrierController {
   }
 
   routes(router: Router): Router {
+    router.get("/getProcessing", (req, res) => this.getProcessing(req, res));
     router.get("/:carrierId", (req, res) => this.getById(req, res));
     router.get("/:carrierId/getLoads", (req, res) => this.getLoads(req, res));
     router.post("", (req, res) => this.createCarrier(req, res));
 
     return router;
+  }
+
+  async getProcessing(_req: Request, res: Response): Promise<Response> {
+    console.log("getting processing");
+    const viewData = await this.carrierService.getProcessing();
+    return res.json(viewData);
   }
 
   async getLoads(req: Request, res: Response): Promise<Response<Load[]>> {

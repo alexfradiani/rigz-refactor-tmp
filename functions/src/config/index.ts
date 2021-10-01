@@ -11,8 +11,4 @@ export const PRODUCTION_ENV = process.env.ENV === "production";
 export const DEV_ENV = process.env.ENV === "dev";
 export const TESTING_ENV = process.env.ENV === "test";
 
-export const {
-  ENV,
-  RATE_LIMIT_WINDOW,
-  RATE_LIMIT_MAX_REQUESTS
-} = process.env;
+export const { ENV, RATE_LIMIT_WINDOW, RATE_LIMIT_MAX_REQUESTS } = process.env;

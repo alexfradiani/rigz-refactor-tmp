@@ -2,6 +2,7 @@ import CarrierProcessing, {
   carrierProcessingConvert
 } from "../models/carrierprocessing";
 
+import User from "../models/user";
 import UserService from "./user";
 import { db } from "./common";
 
@@ -26,5 +27,8 @@ export default class CarrierProcessingService {
   }
 
   /** helper method to extract just the users from the processing entries */
-  async getUsersForCarrier(carrierId: string) {}
+  async getUsersForCarrier(carrierId: string): Promise<User[]> {
+    const users: User[] = [];
+    return users;
+  }
 }

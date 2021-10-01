@@ -66,7 +66,7 @@ export default class CarrierService {
       if (loadDocs.empty) return [];
 
       const loads: Load[] = [];
-      loadDocs.forEach((doc) => loads.push(doc.data()));
+      loadDocs.forEach((doc) => loads.push(doc.data() as Load));
       return loads;
     } catch (error) {
       let errorMessage = `Error trying to getLoads by carrierId:${carrierId}`;
@@ -80,14 +80,14 @@ export default class CarrierService {
     }
   }
 
-  async getProcessing() {
+  async getProcessing(): Promise<ViewData[]> {
     const docSnap = await this.withLoads()
       .where("isActive", "==", true)
       .orderBy("dueDate")
       .get();
     const carriers: Carrier[] = [];
     for (const doc of docSnap.docs) {
-      const load = doc.data();
+      const load = doc.data() as Load;
       let carrier = carriers.find((c) => c.id === load.carrierId);
       if (!carrier) {
         carrier = (await this.getById(load.carrierId)) as Carrier;
@@ -99,7 +99,7 @@ export default class CarrierService {
     return this.processingPageData(carriers);
   }
 
-  async processingPageData(carriers: Carrier[]): ViewData[] {
+  async processingPageData(carriers: Carrier[]): Promise<ViewData[]> {
     const factoringSvc = new FactoringCompanyService();
     const collectionSvc = new CollectionBoardService();
     const processingSvc = new CarrierProcessingService();
