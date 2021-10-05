@@ -20,7 +20,6 @@ export class CarrierController {
   }
 
   async getProcessing(_req: Request, res: Response): Promise<Response> {
-    console.log("getting processing");
     const viewData = await this.carrierService.getProcessing();
     return res.json(viewData);
   }
