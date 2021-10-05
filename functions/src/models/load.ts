@@ -40,3 +40,5 @@ export const loadConvert = (): FirestoreDataConverter<Load> => ({
     return load;
   }
 });
+
+export const loadCollection = "loads";

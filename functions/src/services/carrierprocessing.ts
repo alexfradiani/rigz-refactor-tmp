@@ -1,4 +1,5 @@
 import CarrierProcessing, {
+  carrierProcessingCollection,
   carrierProcessingConvert
 } from "../models/carrierprocessing";
 
@@ -11,7 +12,7 @@ export default class CarrierProcessingService {
     const userSvc = new UserService();
 
     const docSnap = await db
-      .collection("carrierProcessing")
+      .collection(carrierProcessingCollection)
       .withConverter(carrierProcessingConvert())
       .where("carrierId", "==", carrierId)
       .get();

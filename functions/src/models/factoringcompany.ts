@@ -16,3 +16,5 @@ export const factoringCompanyConvert = () => ({
     return fc;
   }
 });
+
+export const factoringCompaniesCollection = "factoringCompanies";

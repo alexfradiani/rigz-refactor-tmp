@@ -50,3 +50,5 @@ export const financialTransactionConvert = () => ({
     return ft;
   }
 });
+
+export const financialTransactionCollection = "financialTransactions";

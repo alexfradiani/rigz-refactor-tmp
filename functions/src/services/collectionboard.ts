@@ -1,10 +1,13 @@
-import { collectionBoardConvert } from "../models/collectionboard";
+import {
+  collectionBoardCollection,
+  collectionBoardConvert
+} from "../models/collectionboard";
 import { db } from "./common";
 
 export default class CollectionBoardService {
   async getLastCB(carrierId: string) {
     const docs = await db
-      .collection("collectionBoard")
+      .collection(collectionBoardCollection)
       .withConverter(collectionBoardConvert())
       .where("carrierId", "==", carrierId)
       .orderBy("date", "desc")

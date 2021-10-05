@@ -20,3 +20,5 @@ export const userConvert = () => ({
     return user;
   }
 });
+
+export const userCollection = "users";

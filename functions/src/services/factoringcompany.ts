@@ -1,10 +1,13 @@
 import { db } from "./common";
-import { factoringCompanyConvert } from "../models/factoringcompany";
+import {
+  factoringCompaniesCollection,
+  factoringCompanyConvert
+} from "../models/factoringcompany";
 
 export default class FactoringCompanyService {
   async getById(factoringId: string) {
     const doc = await db
-      .collection("factoringCompanies")
+      .collection(factoringCompaniesCollection)
       .withConverter(factoringCompanyConvert())
       .doc(factoringId)
       .get();

@@ -35,3 +35,5 @@ export const carrierProcessingConvert = () => ({
     return processing;
   }
 });
+
+export const carrierProcessingCollection = "carrierProcessing";

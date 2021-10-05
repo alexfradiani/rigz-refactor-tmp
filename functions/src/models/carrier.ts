@@ -45,3 +45,5 @@ export const carrierConvert = () => ({
     return carrier;
   }
 });
+
+export const carrierCollection = "carriers";

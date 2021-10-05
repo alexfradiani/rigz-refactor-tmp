@@ -2,8 +2,8 @@
 
 import * as yargs from "yargs";
 
-import CarrierSeed from "./carrier.seed";
-import LoadSeed from "./load.seed";
+import CarrierSeed from "./entities/carrier.seed";
+import LoadSeed from "./entities/load.seed";
 
 const seedClasses = {
   CarrierSeed,
@@ -16,7 +16,8 @@ interface Arguments {
 }
 
 export interface CLIMethod {
-  one?: () => void;
+  one?: () => Promise<string>;
+  many?: (max?: number) => Promise<string[]>;
 }
 
 const argv: Arguments = yargs.options({

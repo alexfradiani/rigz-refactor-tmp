@@ -1,5 +1,5 @@
-import Carrier, { carrierConvert } from "../models/carrier";
-import Load, { loadConvert } from "../models/load";
+import Carrier, { carrierConvert, carrierCollection } from "../models/carrier";
+import Load, { loadCollection, loadConvert } from "../models/load";
 
 import CarrierProcessingService from "./carrierprocessing";
 import CollectionBoardService from "./collectionboard";
@@ -50,7 +50,7 @@ export default class CarrierService {
 
   async getById(id: string): Promise<Carrier | undefined> {
     const doc = await db
-      .collection("carriers")
+      .collection(carrierCollection)
       .withConverter(carrierConvert())
       .doc(id)
       .get();
@@ -135,6 +135,6 @@ export default class CarrierService {
   }
 
   withLoads(): CollectionReference {
-    return db.collection("loads").withConverter(loadConvert());
+    return db.collection(loadCollection).withConverter(loadConvert());
   }
 }
