@@ -2,6 +2,7 @@ import FinancialTransaction, {
   financialTransactionConvert
 } from "../models/financialtransaction";
 
+import { CollectionReference } from "@google-cloud/firestore";
 import Load from "../models/load";
 import { db } from "./common";
 
@@ -19,7 +20,7 @@ export default class FinancialTransactionService {
   /**
    * workaround for firestore IN operator constraint of 10 values
    */
-  async compoundIn(loads: Load[]) {
+  async compoundIn(loads: Load[]): Promise<FinancialTransaction[]> {
     const chunksLength = Math.ceil(loads.length / 10);
     const transactions: FinancialTransaction[] = [];
     for (let i = 0; i < chunksLength; i++) {
@@ -37,7 +38,7 @@ export default class FinancialTransactionService {
     return loads.map((load) => load.id);
   }
 
-  withFinancialTransactions() {
+  withFinancialTransactions(): CollectionReference<FinancialTransaction> {
     return db
       .collection("financialTransactions")
       .withConverter(financialTransactionConvert());

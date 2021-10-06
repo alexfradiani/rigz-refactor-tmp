@@ -1,14 +1,17 @@
+import FactoringCompany, {
+  factoringCompanyConvert
+} from "../models/factoringcompany";
+
 import { db } from "./common";
-import { factoringCompanyConvert } from "../models/factoringcompany";
 
 export default class FactoringCompanyService {
-  async getById(factoringId: string) {
+  async getById(factoringId: string): Promise<FactoringCompany> {
     const doc = await db
       .collection("factoringCompanies")
       .withConverter(factoringCompanyConvert())
       .doc(factoringId)
       .get();
 
-    return doc.data();
+    return doc.data() as FactoringCompany;
   }
 }

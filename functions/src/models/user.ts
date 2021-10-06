@@ -1,4 +1,7 @@
-import { QueryDocumentSnapshot } from "firebase-functions/v1/firestore";
+import {
+  FirestoreDataConverter,
+  QueryDocumentSnapshot
+} from "@google-cloud/firestore";
 
 export default class User {
   id: string;
@@ -12,7 +15,7 @@ export default class User {
   }
 }
 
-export const userConvert = () => ({
+export const userConvert = (): FirestoreDataConverter<User> => ({
   toFirestore: (data: User) => data,
   fromFirestore: (snap: QueryDocumentSnapshot) => {
     const data = snap.data();

@@ -1,4 +1,8 @@
-import { QueryDocumentSnapshot } from "firebase-functions/v1/firestore";
+import {
+  FirestoreDataConverter,
+  QueryDocumentSnapshot
+} from "@google-cloud/firestore";
+
 import User from "./user";
 
 /**
@@ -22,16 +26,17 @@ export default class CarrierProcessing {
   }
 }
 
-export const carrierProcessingConvert = () => ({
-  toFirestore: (data: CarrierProcessing) => data,
-  fromFirestore: (snap: QueryDocumentSnapshot) => {
-    const data = snap.data();
-    const processing = new CarrierProcessing(
-      snap.id,
-      data.carrierId,
-      data.lastUpdate,
-      data.userId
-    );
-    return processing;
-  }
-});
+export const carrierProcessingConvert =
+  (): FirestoreDataConverter<CarrierProcessing> => ({
+    toFirestore: (data: CarrierProcessing) => data,
+    fromFirestore: (snap: QueryDocumentSnapshot) => {
+      const data = snap.data();
+      const processing = new CarrierProcessing(
+        snap.id,
+        data.carrierId,
+        data.lastUpdate,
+        data.userId
+      );
+      return processing;
+    }
+  });

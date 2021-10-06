@@ -1,3 +1,8 @@
+import {
+  FirestoreDataConverter,
+  QueryDocumentSnapshot
+} from "@google-cloud/firestore";
+
 export default class FactoringCompany {
   id: string;
   name: string;
@@ -8,11 +13,12 @@ export default class FactoringCompany {
   }
 }
 
-export const factoringCompanyConvert = () => ({
-  toFirestore: (data: FactoringCompany) => data,
-  fromFirestore: (snap: FirebaseFirestore.QueryDocumentSnapshot) => {
-    const data = snap.data();
-    const fc = new FactoringCompany(snap.id, data.name);
-    return fc;
-  }
-});
+export const factoringCompanyConvert =
+  (): FirestoreDataConverter<FactoringCompany> => ({
+    toFirestore: (data: FactoringCompany) => data,
+    fromFirestore: (snap: QueryDocumentSnapshot) => {
+      const data = snap.data();
+      const fc = new FactoringCompany(snap.id, data.name);
+      return fc;
+    }
+  });

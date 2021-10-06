@@ -1,5 +1,9 @@
+import {
+  FirestoreDataConverter,
+  QueryDocumentSnapshot
+} from "@google-cloud/firestore";
+
 import Carrier from "./carrier";
-import { FirestoreDataConverter } from "@google-cloud/firestore";
 
 export default class Load {
   id: string;
@@ -28,7 +32,7 @@ export default class Load {
 
 export const loadConvert = (): FirestoreDataConverter<Load> => ({
   toFirestore: (data: Load) => data,
-  fromFirestore: (snap: FirebaseFirestore.QueryDocumentSnapshot) => {
+  fromFirestore: (snap: QueryDocumentSnapshot) => {
     const data = snap.data();
     const load = new Load(
       snap.id,

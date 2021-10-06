@@ -1,5 +1,11 @@
+import {
+  FirestoreDataConverter,
+  QueryDocumentSnapshot
+} from "@google-cloud/firestore";
+
 import FactoringCompany from "./factoringcompany";
 import Load from "./load";
+
 /**
  * Main model to represent carriers data
  */
@@ -31,9 +37,9 @@ export default class Carrier {
   }
 }
 
-export const carrierConvert = () => ({
+export const carrierConvert = (): FirestoreDataConverter<Carrier> => ({
   toFirestore: (data: Carrier) => data,
-  fromFirestore: (snap: FirebaseFirestore.QueryDocumentSnapshot) => {
+  fromFirestore: (snap: QueryDocumentSnapshot) => {
     const data = snap.data();
     const carrier = new Carrier(
       snap.id,
