@@ -8,7 +8,7 @@ import UserService from "./user";
 import { db } from "./common";
 
 export default class CarrierProcessingService {
-  async getEntriesForCarrier(carrierId: string) {
+  async getEntriesForCarrier(carrierId: string): Promise<CarrierProcessing[]> {
     const userSvc = new UserService();
 
     const docSnap = await db
@@ -30,6 +30,12 @@ export default class CarrierProcessingService {
   /** helper method to extract just the users from the processing entries */
   async getUsersForCarrier(carrierId: string): Promise<User[]> {
     const users: User[] = [];
+    const entries = await this.getEntriesForCarrier(carrierId);
+
+    entries.forEach((entry) => {
+      users.push(entry.user as User);
+    });
+
     return users;
   }
 }

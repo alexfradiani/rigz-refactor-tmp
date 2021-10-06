@@ -1,3 +1,8 @@
+import {
+  FirestoreDataConverter,
+  QueryDocumentSnapshot
+} from "@google-cloud/firestore";
+
 export default class FinancialTransaction {
   id: string;
   carrierAmount: number;
@@ -32,23 +37,24 @@ export default class FinancialTransaction {
   }
 }
 
-export const financialTransactionConvert = () => ({
-  toFirestore: (data: FinancialTransaction) => data,
-  fromFirestore: (snap: FirebaseFirestore.QueryDocumentSnapshot) => {
-    const data = snap.data();
-    const ft = new FinancialTransaction(
-      snap.id,
-      data.carrierAmount,
-      data.carrierCBAmount,
-      data.carrierPending,
-      data.customerAmount,
-      data.date,
-      data.loadId,
-      data.loadProfitAmount,
-      data.type
-    );
-    return ft;
-  }
-});
+export const financialTransactionConvert =
+  (): FirestoreDataConverter<FinancialTransaction> => ({
+    toFirestore: (data: FinancialTransaction) => data,
+    fromFirestore: (snap: QueryDocumentSnapshot) => {
+      const data = snap.data();
+      const ft = new FinancialTransaction(
+        snap.id,
+        data.carrierAmount,
+        data.carrierCBAmount,
+        data.carrierPending,
+        data.customerAmount,
+        data.date,
+        data.loadId,
+        data.loadProfitAmount,
+        data.type
+      );
+      return ft;
+    }
+  });
 
 export const financialTransactionCollection = "financialTransactions";

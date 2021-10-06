@@ -1,14 +1,15 @@
+import User, { userConvert } from "../models/user";
+
 import { db } from "./common";
-import { userConvert } from "../models/user";
 
 export default class UserService {
-  async getById(userId: string) {
+  async getById(userId: string): Promise<User> {
     const doc = await db
       .collection("users")
       .withConverter(userConvert())
       .doc(userId)
       .get();
 
-    return doc.data();
+    return doc.data() as User;
   }
 }

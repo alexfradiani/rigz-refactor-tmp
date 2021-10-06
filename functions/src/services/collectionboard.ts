@@ -1,11 +1,12 @@
-import {
+import CollectionBoard, {
   collectionBoardCollection,
   collectionBoardConvert
 } from "../models/collectionboard";
+
 import { db } from "./common";
 
 export default class CollectionBoardService {
-  async getLastCB(carrierId: string) {
+  async getLastCB(carrierId: string): Promise<CollectionBoard> {
     const docs = await db
       .collection(collectionBoardCollection)
       .withConverter(collectionBoardConvert())

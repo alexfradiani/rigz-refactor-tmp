@@ -1,3 +1,8 @@
+import {
+  FirestoreDataConverter,
+  QueryDocumentSnapshot
+} from "@google-cloud/firestore";
+
 export default class CollectionBoard {
   id: string;
   carrierId: string;
@@ -20,20 +25,20 @@ export default class CollectionBoard {
   }
 }
 
-export const collectionBoardConvert = () => ({
-  toFirestore: (data: CollectionBoard) => data,
-  fromFirestore: (snap: FirebaseFirestore.QueryDocumentSnapshot) => {
-    const data = snap.data();
-    const cb = new CollectionBoard(
-      snap.id,
-      data.carrierId,
-      data.carrierBalance,
-      data.date,
-      data.displayId
-    );
-    return cb;
-  }
-});
-
+export const collectionBoardConvert =
+  (): FirestoreDataConverter<CollectionBoard> => ({
+    toFirestore: (data: CollectionBoard) => data,
+    fromFirestore: (snap: QueryDocumentSnapshot) => {
+      const data = snap.data();
+      const cb = new CollectionBoard(
+        snap.id,
+        data.carrierId,
+        data.carrierBalance,
+        data.date,
+        data.displayId
+      );
+      return cb;
+    }
+  });
 
 export const collectionBoardCollection = "collectionBoard";
