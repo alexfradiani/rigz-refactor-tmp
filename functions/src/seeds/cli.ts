@@ -1,13 +1,10 @@
 #!/usr/bin/env node
 
 import * as yargs from "yargs";
-
-import CarrierSeed from "./entities/carrier.seed";
-import LoadSeed from "./entities/load.seed";
+import ProcessingPageSeed from "./useCases/processingPage.seed";
 
 const seedClasses = {
-  CarrierSeed,
-  LoadSeed
+  ProcessingPageSeed
 };
 
 interface Arguments {
@@ -16,8 +13,7 @@ interface Arguments {
 }
 
 export interface CLIMethod {
-  one?: () => Promise<string>;
-  many?: (max?: number) => Promise<string[]>;
+  one: () => Promise<string>;
 }
 
 const argv: Arguments = yargs.options({
