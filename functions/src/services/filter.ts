@@ -13,7 +13,11 @@ export default class Filter<T> {
   }
 
   sortBy(field: keyof T, sorting: SortOrder): Filter<T> {
-    // TODO
+    const isAsc = sorting === "ASC";
+    this.results.sort((a, b) => {
+      return (a[field] < b[field] ? -1 : 1) * (isAsc ? 1 : -1);
+    });
+
     return this;
   }
 
