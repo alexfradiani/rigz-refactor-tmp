@@ -44,14 +44,14 @@ export default class LoadSeed implements CLIMethod {
 
       carriersCreated.map((carrierId) => {
         for (let index = 0; index < maxAmount; index++) {
-          const newCarrierRef = db.collection(loadCollection).doc();
-          batch.set(newCarrierRef, {
+          const newLoadRef = db.collection(loadCollection).doc();
+          batch.set(newLoadRef, {
             carrierFee: faker.datatype.number(),
             carrierId: carrierId,
             isActive: true,
             dueDate: faker.datatype.datetime()
           });
-          loadIdsCreated.push(newCarrierRef.id);
+          loadIdsCreated.push(newLoadRef.id);
         }
       });
       await batch.commit();
