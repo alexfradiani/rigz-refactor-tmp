@@ -1,46 +1,44 @@
-import { db } from "../../services/common";
 import * as faker from "faker";
-import { loadCollection } from "../../models/load";
+
 import CarrierSeed from "./carrier.seed";
-import FinancialTransactionSeed from "./financialTransaction.seed";
+import { batcher } from "../../services/common";
+// import FinancialTransactionSeed from "./financialTransaction.seed";
+import { loadCollection } from "../../models/load";
 
+interface LoadObj {
+  carrierFee: number;
+  carrierId: string;
+  isActive: boolean;
+  dueDate: Date;
+}
 export default class LoadSeed {
-  async manyToProcessingPage(
-    amountOfLoads: number,
-    amountOfCarriers: number
-  ): Promise<string[]> {
-    try {
-      const loadIdsCreated: string[] = [];
-      const maxAmountOfLoads = !amountOfLoads ? 20 : amountOfLoads;
-      const maxAmountOfCarriers = !amountOfCarriers ? 1200 : amountOfCarriers;
+  async one(): Promise<void> {}
 
-      // Seeding Carriers, FactoringCompany, CarrierProcessing, CollectionBoard
-      const carriersCreated = await new CarrierSeed().manyToProcessingPage(
-        maxAmountOfCarriers
-      );
-
-      // Seeding Loads and FinancialTransactions
-      carriersCreated.map(async (carrierId) => {
-        for (let index = 0; index < maxAmountOfLoads; index++) {
-          const loadCreated = await db.collection(loadCollection).add({
-            carrierFee: faker.datatype.number(),
-            carrierId: carrierId,
-            isActive: true,
-            dueDate: faker.datatype.datetime()
-          });
-          loadIdsCreated.push(loadCreated.id);
-        }
-      });
-
-      await new FinancialTransactionSeed().manyWithLoadIds(
-        maxAmountOfLoads,
-        loadIdsCreated
-      );
-
-      return loadIdsCreated;
-    } catch (error) {
-      console.log(error, "LoadSeed insert many fails");
-      throw error;
+  async many(count = 10): Promise<string[]> {
+    const loadsData = [];
+    for (let i = 0; i < count; i++) {
+      const carrierId = await new CarrierSeed().one();
+      loadsData.push(this.getFakeLoad(carrierId));
     }
+
+    return await batcher.write(loadCollection, loadsData);
+  }
+
+  async withCarrier(carrierId: string, count = 10): Promise<string[]> {
+    const loadsData = [];
+    for (let i = 0; i < count; i++) {
+      loadsData.push(this.getFakeLoad(carrierId));
+    }
+
+    return await batcher.write(loadCollection, loadsData);
+  }
+
+  getFakeLoad(carrierId: string): LoadObj {
+    return {
+      carrierFee: faker.datatype.number(),
+      carrierId,
+      isActive: true,
+      dueDate: faker.datatype.datetime()
+    };
   }
 }

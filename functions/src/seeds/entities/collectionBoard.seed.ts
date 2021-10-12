@@ -1,34 +1,39 @@
-import { db } from "../../services/common";
 import * as faker from "faker";
+
+import { batcher } from "../../services/common";
 import { collectionBoardCollection } from "../../models/collectionboard";
 
+interface CBObj {
+  carrierId: string;
+  carrierBalance: number;
+  date: Date;
+  displayId: string;
+}
+
 export default class CollectionBoardSeed {
-  async manyWithCarrierIds(
-    max: number,
-    carrierIds: string[]
-  ): Promise<string[]> {
-    try {
-      const result: string[] = [];
-      max = !max ? carrierIds.length : max;
+  async one(): Promise<void> {
+    // TODO
+  }
 
-      carrierIds.map(async (carrierId) => {
-        for (let index = 0; index < max; index++) {
-          const collectionBoardCreated = await db
-            .collection(collectionBoardCollection)
-            .add({
-              carrierId: carrierId,
-              carrierBalance: faker.datatype.number(),
-              date: faker.datatype.datetime(),
-              displayId: `${faker.datatype.number()}`
-            });
-          result.push(collectionBoardCreated.id);
-        }
-      });
+  async many(): Promise<void> {
+    // TODO
+  }
 
-      return result;
-    } catch (error) {
-      console.log(error, "CarrierSeed insert many fails");
-      throw error;
+  async withCarrierId(carrierId: string, count = 10): Promise<string[]> {
+    const cbData = [];
+    for (let index = 0; index < count; index++) {
+      cbData.push(this.getFakeCollectionBoard(carrierId));
     }
+
+    return await batcher.write(collectionBoardCollection, cbData);
+  }
+
+  getFakeCollectionBoard(carrierId: string): CBObj {
+    return {
+      carrierId,
+      carrierBalance: faker.datatype.number(),
+      date: faker.datatype.datetime(),
+      displayId: `${faker.datatype.number()}`
+    };
   }
 }

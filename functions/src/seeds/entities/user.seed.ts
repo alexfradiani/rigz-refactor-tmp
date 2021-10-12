@@ -1,23 +1,34 @@
-import { db } from "../../services/common";
 import * as faker from "faker";
+
+import { batcher } from "../../services/common";
 import { userCollection } from "../../models/user";
 
-export default class UserSeed {
-  async many(maxAmountofUsers: number): Promise<string[]> {
-    try {
-      const result: string[] = [];
+interface UserObj {
+  name: string;
+  role: string;
+}
 
-      for (let index = 0; index < maxAmountofUsers; index++) {
-        const userCreated = await db.collection(userCollection).add({
-          name: `${faker.name.firstName()} ${faker.name.lastName()}`,
-          role: "admin",
-        });
-        result.push(userCreated.id);
+export default class UserSeed {
+  async one(): Promise<void> {}
+
+  async many(count = 10): Promise<string[]> {
+    try {
+      const usersData = [];
+      for (let index = 0; index < count; index++) {
+        usersData.push(this.getFakeUser());
       }
-      return result;
+
+      return await batcher.write(userCollection, usersData);
     } catch (error) {
-      console.log(error, "UserSeed insert many fails");
+      console.log(error, "UserSeed insert many failed");
       throw error;
     }
+  }
+
+  getFakeUser(): UserObj {
+    return {
+      name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+      role: "mocked-role"
+    };
   }
 }

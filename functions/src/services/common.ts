@@ -1,5 +1,6 @@
 import * as admin from "firebase-admin";
 
+import Batcher from "../utils/batcher";
 import { ServiceAccount } from "firebase-admin";
 import { USE_FIRESTORE_EMULATOR } from "../config";
 import serviceAccount from "../../../serviceAccountKey.test.json";
@@ -18,3 +19,5 @@ if (USE_FIRESTORE_EMULATOR) {
 }
 
 export const db = fstore;
+
+export const batcher = new Batcher(db);

@@ -1,51 +1,52 @@
-import { db } from "../../services/common";
 import * as faker from "faker";
-import { carrierCollection } from "../../models/carrier";
-import FactoringCompanySeed from "./factoringCompany.seed";
-import CollectionBoardSeed from "./collectionBoard.seed";
-import UserSeed from "./user.seed";
-import CarrierProcessingSeed from "./carrierProcessing.seed";
 
-export default class CarrierSeed {
+import { CLIMethod } from "../cli";
+import FactoringCompanySeed from "./factoringCompany.seed";
+import { batcher } from "../../services/common";
+import { carrierCollection } from "../../models/carrier";
+
+interface CarrierObj {
+  displayId: string;
+  name: string;
+  paymentTerms: string;
+  factoringCompanyId: string;
+}
+
+export default class CarrierSeed implements CLIMethod {
   private async createFactoringCompany(): Promise<string> {
     const factoringCompanySeed = new FactoringCompanySeed();
     return await factoringCompanySeed.one();
   }
 
-  async manyToProcessingPage(max: number): Promise<string[]> {
-    try {
-      const carrierIds: string[] = [];
-      max = !max ? 1200 : max;
+  async one(): Promise<string> {
+    const fcId = await this.createFactoringCompany();
+    const results = await batcher.write(carrierCollection, [
+      this.getFakeCarrier(fcId)
+    ]);
+    return results[0];
+  }
 
-      for (let index = 0; index < max; index++) {
-        const factoringCompanyId = await this.createFactoringCompany();
-        const result = await db.collection(carrierCollection).add({
-          displayId: `${faker.datatype.number()}`,
-          name: `${faker.name.firstName()} ${faker.name.lastName()}`,
-          paymentTerms: `${faker.datatype.number(30)} days`,
-          factoringCompanyId: factoringCompanyId
-        });
-        carrierIds.push(result.id);
+  async many(count = 10): Promise<string[]> {
+    try {
+      const carriersData = [];
+      for (let index = 0; index < count; index++) {
+        const fcId = await this.createFactoringCompany();
+        carriersData.push(this.getFakeCarrier(fcId));
       }
 
-      // Seeding Users and CarrierProcessing
-      const userIds = await new UserSeed().many(carrierIds.length);
-      await new CarrierProcessingSeed().manyWithCarriersAndUsersIds(
-        carrierIds.length,
-        carrierIds,
-        userIds
-      );
-
-      // Seeding CollectionBoard
-      await new CollectionBoardSeed().manyWithCarrierIds(
-        carrierIds.length,
-        carrierIds
-      );
-
-      return carrierIds;
+      return await batcher.write(carrierCollection, carriersData);
     } catch (error) {
-      console.log(error, "CarrierSeed insert many fails");
+      console.log(error, "CarrierSeed insert many failed");
       throw error;
     }
+  }
+
+  getFakeCarrier(factoringCompanyId = ""): CarrierObj {
+    return {
+      displayId: `${faker.datatype.number()}`,
+      name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+      paymentTerms: `${faker.datatype.number(30)} days`,
+      factoringCompanyId
+    };
   }
 }

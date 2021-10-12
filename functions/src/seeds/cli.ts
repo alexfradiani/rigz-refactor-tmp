@@ -1,10 +1,25 @@
 #!/usr/bin/env node
 
 import * as yargs from "yargs";
+
+import CarrierProcessingSeed from "./entities/carrierProcessing.seed";
+import CarrierSeed from "./entities/carrier.seed";
+import CollectionBoardSeed from "./entities/collectionBoard.seed";
+import FactoringCompanySeed from "./entities/factoringCompany.seed";
+import FinancialTransactionSeed from "./entities/financialTransaction.seed";
+import LoadSeed from "./entities/load.seed";
 import ProcessingPageSeed from "./useCases/processingPage.seed";
+import UserSeed from "./entities/user.seed";
 
 const seedClasses = {
-  ProcessingPageSeed
+  ProcessingPageSeed,
+  CarrierSeed,
+  FactoringCompanySeed,
+  LoadSeed,
+  FinancialTransactionSeed,
+  UserSeed,
+  CarrierProcessingSeed,
+  CollectionBoardSeed
 };
 
 interface Arguments {
@@ -13,7 +28,8 @@ interface Arguments {
 }
 
 export interface CLIMethod {
-  one: () => Promise<string>;
+  one?: () => Promise<string> | Promise<void>;
+  many?: (max?: number) => Promise<string[]> | Promise<void>;
 }
 
 const argv: Arguments = yargs.options({
