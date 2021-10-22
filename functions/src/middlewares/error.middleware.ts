@@ -1,22 +1,23 @@
 import { Response } from "express";
 
 export class ErrorMiddleware {
-  static handler(err: unknown, res: Response): void {
-    if (err instanceof ApiError) {
-      res.status(500); // Check with Alex
-      res.send(err);
-    } else {
-      res.sendStatus(500); // other unhandled error
-    }
+  static handler(_err: unknown, res: Response): void {
+    res.sendStatus(500); // unhandled error
   }
 }
 
-export class ApiError extends Error {
-  constructor(name: string, message: string, stack: string) {
-    super(message);
-    // this.status = status; Check with Alex
-    this.name = name;
-    this.message = message;
-    this.stack = stack;
-  }
-}
+type ErrorObj = {
+  error: {
+    name: string;
+    message: string;
+  };
+};
+
+export const apiError = (name: string, message: string): ErrorObj => {
+  return {
+    error: {
+      name,
+      message
+    }
+  };
+};

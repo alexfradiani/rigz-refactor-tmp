@@ -1,45 +1,33 @@
-import { RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW } from "./config";
+import "reflect-metadata"; // needed by typeorm
+
 import express, { NextFunction, Request, Response } from "express";
 
+import { CarriersController } from "./controllers/carriers.controller";
 import { ErrorMiddleware } from "./middlewares/error.middleware";
+import LoadsController from "./controllers/loads.controller";
+import { RateLimiterOpts } from "./config";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import { routes } from "./controllers";
 
-export const app = express();
-const router = express.Router();
+const app = express();
 
+// defaults, security, rate-limiter
 app.use(express.json());
 app.use(cors());
-
-// configure security headers
 app.use(helmet());
+app.use(rateLimit(RateLimiterOpts));
 
-// rate limiter middleware
-app.use(
-  rateLimit({
-    windowMs: Number.parseInt(RATE_LIMIT_WINDOW || "5") * 60 * 1000,
-    max: Number.parseInt(RATE_LIMIT_MAX_REQUESTS || "100"),
-    message: {
-      status: 429,
-      message: "Too many requests, please try again later."
-    }
-  })
-);
+const loadsCtrl = new LoadsController();
+app.use("/loads", loadsCtrl.routes());
 
-app.use((req, res, next) => {
-  console.log("New %s %s %s", req.method, req.url, req.path);
+const carriersCtrl = new CarriersController();
+app.use("/carriers", carriersCtrl.routes());
+
+// error middleware handler
+app.use((err: Error, _req: Request, res: Response, next: NextFunction) => {
+  ErrorMiddleware.handler(err, res);
   next();
 });
 
-router.use(routes(router));
-
-// Prefix all routes
-app.use("/api/v1", router);
-
-// error middleware handler
-app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-  ErrorMiddleware.handler(err, res);
-  _next();
-});
+export default app;

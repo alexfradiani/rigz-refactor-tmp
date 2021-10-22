@@ -1,21 +1,21 @@
 {
   "name": "functions",
   "scripts": {
-    "lint": "eslint --ext .js,.ts .",
     "prebuild": "rm -rf ./dist",
     "build": "yarn prebuild && tsc",
     "serve:func": "yarn build && firebase emulators:start --only functions",
-    "serve:fstore": "yarn build && firebase emulators:start --only firestore",
     "shell": "yarn build && firebase functions:shell",
     "start": "yarn shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "seeds": "node ./dist/functions/src/seeds/cli.js"
+    "seeds": "node ./dist/database/seeds/cli.js",
+    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js --config dist/database/ormconfig.js",
+    "lint": "eslint --ext .js,.ts ."
   },
   "engines": {
     "node": "14"
   },
-  "main": "dist/functions/src/index.js",
+  "main": "dist/index.js",
   "dependencies": {
     "@google-cloud/firestore": "4.15.1",
     "@types/faker": "^5.5.8",
@@ -27,6 +27,9 @@
     "firebase-admin": "^9.8.0",
     "firebase-functions": "^3.14.1",
     "helmet": "4.6.0",
+    "mysql": "2.18.1",
+    "reflect-metadata": "0.1.13",
+    "typeorm": "0.2.38",
     "yargs": "17.2.1"
   },
   "devDependencies": {
@@ -41,6 +44,7 @@
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-import": "^2.22.0",
     "firebase-functions-test": "^0.2.0",
+    "ts-node": "10.3.0",
     "typescript": "^3.8.0"
   },
   "private": true
