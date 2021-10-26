@@ -1,24 +1,36 @@
-name: Continuous Integration
-
+name: lint-and-test
 on:
   push:
-    branches: [ main ]
+    branches:
+      - development
   pull_request:
-    branches: [ main ]
-
+    branches:
+      - development
 jobs:
-  build:
+  lint-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Read .nvmrc
+      - name: read .nvmrc
         run: echo ::set-output name=NVMRC::$(cat .nvmrc)
         id: nvm
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v1
         with:
-          node-version: '${{ steps.nvm.outputs.NVMRC }}'
-      - name: Install dependencies
-        run: cd functions && yarn --frozen-lockfile
-      - name: Lint
-        run: cd functions && yarn lint
+          node-version: "${{ steps.nvm.outputs.NVMRC }}"
+      - run: yarn --cwd=functions --frozen-lockfile
+      - run: yarn --cwd=functions lint
+      - run: yarn --cwd=functions build
+      - name: Set up MySQL
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -e 'CREATE DATABASE test;' -uroot -proot
+      - run: yarn --cwd=functions migration:ci
+      - name: Test & publish code coverage
+        uses: paambaati/codeclimate-action@v2.5.7
+        env:
+          CC_TEST_REPORTER_ID: 4031df297e7e3baf9f876cda57686d15060de19c611d5b94f76b64e5ae7999fb
+        with:
+          coverageCommand: yarn --cwd=functions test:ci
+          coverageLocations: ${{github.workspace}}/functions/coverage/lcov.info:lcov
+          prefix: ${{github.workspace}}/functions
+          debug: true

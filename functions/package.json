@@ -10,7 +10,10 @@
     "logs": "firebase functions:log",
     "seeds": "node ./dist/database/seeds/cli.js",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js --config dist/database/ormconfig.js",
-    "lint": "eslint --ext .js,.ts ."
+    "lint": "eslint --ext .js,.ts .",
+    "test": "jest",
+    "test:ci": "ENV=ci jest --verbose --coverage --runInBand",
+    "migration:ci": "ENV=ci yarn typeorm migration:run"
   },
   "engines": {
     "node": "14"
@@ -27,7 +30,7 @@
     "firebase-admin": "^9.8.0",
     "firebase-functions": "^3.14.1",
     "helmet": "4.6.0",
-    "mysql": "2.18.1",
+    "mysql2": "2.3.2",
     "reflect-metadata": "0.1.13",
     "typeorm": "0.2.38",
     "yargs": "17.2.1"
@@ -37,6 +40,8 @@
     "@types/express": "^4.17.13",
     "@types/express-rate-limit": "^5.1.3",
     "@types/helmet": "^4.0.0",
+    "@types/jest": "27.0.2",
+    "@types/supertest": "2.0.11",
     "@types/yargs": "17.0.3",
     "@typescript-eslint/eslint-plugin": "^3.9.1",
     "@typescript-eslint/parser": "^3.8.0",
@@ -44,6 +49,9 @@
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-import": "^2.22.0",
     "firebase-functions-test": "^0.2.0",
+    "jest": "27.3.1",
+    "supertest": "6.1.6",
+    "ts-jest": "27.0.7",
     "ts-node": "10.3.0",
     "typescript": "^3.8.0"
   },

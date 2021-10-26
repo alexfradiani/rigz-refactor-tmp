@@ -33,6 +33,8 @@ module.exports = {
     "new-cap": 0,
     "no-empty-function": "off",
     "@typescript-eslint/no-empty-function": "off",
-    "valid-jsdoc": "off"
+    "valid-jsdoc": "off",
+    "padded-blocks": "off",
+    "no-trailing-spaces": "off"
   }
 };
