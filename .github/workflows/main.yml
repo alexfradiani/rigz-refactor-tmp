@@ -17,20 +17,19 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: "${{ steps.nvm.outputs.NVMRC }}"
-      - run: yarn --cwd=functions --frozen-lockfile
-      - run: yarn --cwd=functions lint
-      - run: yarn --cwd=functions build
+      - run: yarn --frozen-lockfile
+      - run: yarn lint
+      - run: yarn build
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
           mysql -e 'CREATE DATABASE test;' -uroot -proot
-      - run: yarn --cwd=functions migration:ci
+      - run: yarn migration:ci
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v2.5.7
         env:
           CC_TEST_REPORTER_ID: 4031df297e7e3baf9f876cda57686d15060de19c611d5b94f76b64e5ae7999fb
         with:
-          coverageCommand: yarn --cwd=functions test:ci
-          coverageLocations: ${{github.workspace}}/functions/coverage/lcov.info:lcov
-          prefix: ${{github.workspace}}/functions
+          coverageCommand: yarn test:ci
+          coverageLocations: ${{github.workspace}}/coverage/lcov.info:lcov
           debug: true

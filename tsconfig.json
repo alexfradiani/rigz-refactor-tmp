@@ -16,6 +16,6 @@
     "allowJs": true
   },
   "compileOnSave": true,
-  "include": ["src"],
+  "include": ["src", ".eslintrc.js", "jest.config.js", "ormconfig.ts"],
   "exclude": ["node_modules"]
 }
