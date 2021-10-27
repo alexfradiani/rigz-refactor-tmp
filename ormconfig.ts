@@ -1,4 +1,4 @@
-import { DB } from "../config";
+import { DB } from "./src/config";
 
 export = {
   type: DB.type,

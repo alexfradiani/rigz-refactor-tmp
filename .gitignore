@@ -38,9 +38,6 @@ coverage
 # Bower dependency directory (https://bower.io/)
 bower_components
 
-# node-waf configuration
-.lock-wscript
-
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 
@@ -64,3 +61,13 @@ node_modules/
 
 serviceAccountKey.*.json
 serviceAccountKey.json
+
+# Compiled JavaScript files
+dist
+
+# Node.js dependency directory
+node_modules/
+.env.dev
+.env.test
+.env.prod
+.nvmrc

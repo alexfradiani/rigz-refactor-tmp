@@ -1,5 +1,5 @@
 {
-  "name": "functions",
+  "name": "rigz-refactoring-candidate",
   "scripts": {
     "prebuild": "rm -rf ./dist",
     "build": "yarn prebuild && tsc",
@@ -9,7 +9,7 @@
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
     "seeds": "node ./dist/database/seeds/cli.js",
-    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js --config dist/database/ormconfig.js",
+    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
     "lint": "eslint --ext .js,.ts .",
     "test": "jest",
     "test:ci": "ENV=ci jest --verbose --coverage --runInBand",

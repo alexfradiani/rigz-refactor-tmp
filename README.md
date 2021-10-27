@@ -1,1 +1,1 @@
-# Sample API Prototype: Node.js / TS / Firestore
+# Rigz Refactoring Proposal: Node.js / TS / Firebase / MySQL
