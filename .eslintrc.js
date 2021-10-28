@@ -35,6 +35,7 @@ module.exports = {
     "@typescript-eslint/no-empty-function": "off",
     "valid-jsdoc": "off",
     "padded-blocks": "off",
-    "no-trailing-spaces": "off"
+    "no-trailing-spaces": "off",
+    "operator-linebreak": "off"
   }
 };

@@ -39,6 +39,7 @@ export default class CarrierSeed {
     carrier.name = faker.company.companyName();
     carrier.displayId = faker.datatype.string();
     carrier.factoringCompany = fc;
+    carrier.paymentTerms = faker.datatype.string();
 
     return carrier;
   }

@@ -6,7 +6,7 @@ export class ErrorMiddleware {
   }
 }
 
-type ErrorObj = {
+export type ErrorObj = {
   error: {
     name: string;
     message: string;
