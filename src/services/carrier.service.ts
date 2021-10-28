@@ -30,22 +30,27 @@ export default class CarrierService {
     orderBy: string
   ): Promise<ProcessingRow[]> {
     const db = await createConnection(DB);
+    try {
+      const query = {
+        conditions: this.conditionFilters(filters),
+        limit: `limit ${page.pageNumber * page.size}, ${page.size}`,
+        order: orderBy ? `order by ${orderBy}` : ""
+      };
 
-    const query = {
-      conditions: this.conditionFilters(filters),
-      limit: `limit ${page.pageNumber * page.size}, ${page.size}`,
-      order: orderBy ? `order by ${orderBy}` : ""
-    };
+      const rows: ProcessingRow[] = await db.manager.query(
+        `select * from processing_page 
+        ${query.conditions} 
+        ${query.order} 
+        ${query.limit};`
+      );
 
-    const rows: ProcessingRow[] = await db.manager.query(
-      `select * from processing_page 
-      ${query.conditions} 
-      ${query.order} 
-      ${query.limit};`
-    );
-
+      await db.close();
+      return rows;
+    } catch (e) {
+      console.log(e);
+    }
     await db.close();
-    return rows;
+    throw new Error("could not process request");
   }
 
   conditionFilters(filters: Filter[]): string {
