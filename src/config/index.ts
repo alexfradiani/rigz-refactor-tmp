@@ -12,6 +12,7 @@ if (!process.env.ENV) {
 export const PRODUCTION_ENV = process.env.ENV === "production";
 export const DEV_ENV = process.env.ENV === "dev";
 export const TESTING_ENV = process.env.ENV === "test";
+export const CI_ENV = process.env.ENV === "ci";
 export const USE_FIRESTORE_EMULATOR = process.env.FSTORE_EMULATOR == "true";
 
 const port = process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3306;
@@ -25,12 +26,21 @@ export const DB: MysqlConnectionOptions = {
   database: process.env.TYPEORM_DATABASE || "",
   synchronize: process.env.TYPEORM_SYNCHRONIZE === "true",
   logging: process.env.TYPEORM_LOGGING === "true",
-  entities: ["dist/database/entities/**/*.js"],
-  migrations: ["dist/database/migrations/**/*.js"],
+  entities:
+    TESTING_ENV || CI_ENV
+      ? ["src/database/entities/**/*.ts"]
+      : ["dist/database/entities/**/*.js"],
+  migrations:
+    TESTING_ENV || CI_ENV
+      ? ["src/database/migrations/**/*.ts"]
+      : ["dist/database/migrations/**/*.js"],
   cli: {
     migrationsDir: process.env.TYPEORM_MIGRATIONS_DIR
   },
-  subscribers: ["dist/database/subscribers/**/*.js"]
+  subscribers:
+    TESTING_ENV || CI_ENV
+      ? ["src/database/subscribers/**/*.ts"]
+      : ["dist/database/subscribers/**/*.js"]
 };
 
 export const RateLimiterOpts = {

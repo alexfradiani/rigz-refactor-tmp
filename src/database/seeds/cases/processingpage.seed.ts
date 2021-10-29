@@ -8,9 +8,9 @@ import UserSeed from "../entities/user.seed";
 
 export default class ProcessingPageSeed {
   db: Connection;
-  carriersCount = 20;
-  loadsCount = 5;
-  ftCount = 5;
+  carriersCount = 100;
+  loadsCount = 3;
+  ftCount = 2;
 
   constructor(db: Connection) {
     this.db = db;

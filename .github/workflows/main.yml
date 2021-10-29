@@ -23,7 +23,7 @@ jobs:
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE test;' -uroot -proot
+          mysql -e 'create database test; SET GLOBAL sql_mode = "";' -uroot -proot
       - run: yarn migration:ci
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v2.5.7
