@@ -29,18 +29,18 @@ export const DB: MysqlConnectionOptions = {
   entities:
     TESTING_ENV || CI_ENV
       ? ["src/database/entities/**/*.ts"]
-      : ["dist/database/entities/**/*.js"],
+      : ["dist/src/database/entities/**/*.js"],
   migrations:
     TESTING_ENV || CI_ENV
       ? ["src/database/migrations/**/*.ts"]
-      : ["dist/database/migrations/**/*.js"],
+      : ["dist/src/database/migrations/**/*.js"],
   cli: {
     migrationsDir: process.env.TYPEORM_MIGRATIONS_DIR
   },
   subscribers:
     TESTING_ENV || CI_ENV
       ? ["src/database/subscribers/**/*.ts"]
-      : ["dist/database/subscribers/**/*.js"]
+      : ["dist/src/database/subscribers/**/*.js"]
 };
 
 export const RateLimiterOpts = {
