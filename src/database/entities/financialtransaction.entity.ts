@@ -4,8 +4,8 @@ import Load from "./load.entity";
 
 @Entity()
 export default class FinancialTransaction {
-  @PrimaryGeneratedColumn()
-  id: string;
+  @PrimaryGeneratedColumn("increment")
+  id: number;
 
   @Column()
   carrierAmount: number;

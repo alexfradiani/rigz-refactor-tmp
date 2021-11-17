@@ -4,8 +4,8 @@ import Carrier from "./carrier.entity";
 
 @Entity()
 export default class CollectionBoard {
-  @PrimaryGeneratedColumn()
-  id: string;
+  @PrimaryGeneratedColumn("increment")
+  id: number;
 
   @Column()
   carrierBalance: number;

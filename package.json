@@ -8,7 +8,7 @@
     "start": "yarn shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "seeds": "node ./dist/database/seeds/cli.js",
+    "seeds": "node ./dist/src/database/seeds/cli.js",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
     "lint": "eslint --ext .js,.ts .",
     "test": "ENV=test jest",
@@ -18,7 +18,7 @@
   "engines": {
     "node": "14"
   },
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "dependencies": {
     "@google-cloud/firestore": "4.15.1",
     "@types/faker": "^5.5.8",

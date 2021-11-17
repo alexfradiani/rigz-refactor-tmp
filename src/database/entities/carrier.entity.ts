@@ -1,20 +1,20 @@
 import {
   Column,
   Entity,
-  JoinColumn,
+  ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn
 } from "typeorm";
 
 import CollectionBoard from "./collectionboard.entity";
 import FactoringCompany from "./factoringcompany.entity";
 import Load from "./load.entity";
+import PaymentMethod from "./paymentmethod.entity";
 
 @Entity()
 export default class Carrier {
-  @PrimaryGeneratedColumn()
-  id: string;
+  @PrimaryGeneratedColumn("increment")
+  id: number;
 
   @Column()
   displayId: string;
@@ -28,9 +28,11 @@ export default class Carrier {
   @OneToMany(() => Load, (load) => load.carrier)
   loads: Load[];
 
-  @OneToOne(() => FactoringCompany)
-  @JoinColumn()
+  @ManyToOne(() => FactoringCompany, (fc) => fc.carriers)
   factoringCompany: FactoringCompany;
+
+  @ManyToOne(() => PaymentMethod, (paymentMethod) => paymentMethod.carriers)
+  paymentMethod: PaymentMethod;
 
   @OneToMany(() => CollectionBoard, (cb) => cb.carrier)
   collectionBoards: CollectionBoard[];

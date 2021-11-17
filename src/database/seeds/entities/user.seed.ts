@@ -1,26 +1,29 @@
 import * as faker from "faker";
 
-import { Connection } from "typeorm";
 import User from "../../entities/user.entity";
+import { getManager } from "typeorm";
 
+interface UserSeedProps {
+  name?: string;
+  role?: string;
+}
 export default class UserSeed {
-  db: Connection;
-
-  constructor(db: Connection) {
-    this.db = db;
+  async default(): Promise<void> {
+    const user = this.getFakeUser();
+    await getManager().save(user);
   }
 
-  async one(): Promise<void> {
-    // TODO
-  }
-
-  async many(count = 10): Promise<User[]> {
+  async with(props: UserSeedProps, count = 1): Promise<User[]> {
     const users = [];
     for (let index = 0; index < count; index++) {
-      users.push(this.getFakeUser());
+      const user = this.getFakeUser();
+      const { name, role } = props;
+      if (name) user.name = name;
+      if (role) user.role = role;
+      users.push(user);
     }
 
-    return await this.db.manager.save(users);
+    return await getManager().save(users);
   }
 
   getFakeUser(): User {

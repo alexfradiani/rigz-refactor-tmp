@@ -1,31 +1,37 @@
 import * as faker from "faker";
 
 import Carrier from "../../entities/carrier.entity";
+import CarrierSeed from "./carrier.seed";
 import CollectionBoard from "../../entities/collectionboard.entity";
-import { Connection } from "typeorm";
+import { getManager } from "typeorm";
+
+interface CollectionBoardSeedProps {
+  displayId?: string;
+  carrierBalance?: number;
+  date?: Date;
+  carrier?: Carrier;
+}
 
 export default class CollectionBoardSeed {
-  db: Connection;
-
-  constructor(db: Connection) {
-    this.db = db;
+  async default(): Promise<void> {
+    const carrier = (await new CarrierSeed().with({}))[0];
+    const cb = this.getFakeCollectionBoard(carrier);
+    await getManager().save(cb);
   }
 
-  async one(): Promise<void> {
-    // TODO
-  }
-
-  async many(): Promise<void> {
-    // TODO
-  }
-
-  async withCarrier(carrier: Carrier, count = 10): Promise<CollectionBoard[]> {
+  async with(
+    props: CollectionBoardSeedProps,
+    count = 1
+  ): Promise<CollectionBoard[]> {
     const boards = [];
     for (let index = 0; index < count; index++) {
-      boards.push(this.getFakeCollectionBoard(carrier));
+      const { carrier: ca } = props;
+      const carrier = ca ? ca : (await new CarrierSeed().with({}))[0];
+      const cb = this.getFakeCollectionBoard(carrier);
+      boards.push(cb);
     }
 
-    return await this.db.manager.save(boards);
+    return await getManager().save(boards);
   }
 
   getFakeCollectionBoard(carrier: Carrier): CollectionBoard {

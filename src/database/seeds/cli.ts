@@ -4,15 +4,16 @@ import * as yargs from "yargs";
 
 import CarrierSeed from "./entities/carrier.seed";
 import CollectionBoardSeed from "./entities/collectionboard.seed";
-import { DB } from "../../config";
+import DBService from "../../services/db.service";
+import DefaultSeed from "./cases/default.seed";
 import FactoringCompanySeed from "./entities/factoringcompany.seed";
 import FinancialTransactionSeed from "./entities/financialtransaction.seed";
 import LoadSeed from "./entities/load.seed";
 import ProcessingPageSeed from "./cases/processingpage.seed";
 import UserSeed from "./entities/user.seed";
-import { createConnection } from "typeorm";
 
 const seedClasses = {
+  DefaultSeed,
   ProcessingPageSeed,
   CarrierSeed,
   FactoringCompanySeed,
@@ -24,23 +25,12 @@ const seedClasses = {
 
 interface Arguments {
   seeder: string;
-  method: string;
-}
-
-export interface CLIMethod<T> {
-  one?: () => Promise<T> | Promise<void>;
-  many?: (max?: number) => Promise<T[]> | Promise<void>;
 }
 
 const argv: Arguments = yargs.options({
   seeder: {
     alias: "s",
     description: "seeder to use",
-    type: "string"
-  },
-  method: {
-    alias: "m",
-    description: "method to run",
     type: "string"
   }
 }).argv as Arguments;
@@ -49,20 +39,20 @@ const setupSeeder = async () => {
   let seederName = argv.seeder;
   seederName = seederName.charAt(0).toUpperCase() + seederName.slice(1);
   const className = (seederName + "Seed") as keyof typeof seedClasses;
-  const db = await createConnection(DB);
-  const seeder = new seedClasses[className](db);
-  const methodName = argv.method as keyof CLIMethod<typeof seeder>;
+
+  await DBService.init();
+  const seeder = new seedClasses[className]();
   try {
-    await seeder[methodName]();
+    await seeder.default();
   } catch (error) {
     console.log(
-      "Could not run the requested seeder and method. \nError: ",
+      "Could not run the requested seeder. \nError: ",
       error,
       "\narguments: ",
       argv
     );
   }
-  await db.close();
+  await DBService.close();
 };
 
 setupSeeder();

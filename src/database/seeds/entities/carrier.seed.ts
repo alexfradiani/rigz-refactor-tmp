@@ -1,45 +1,54 @@
 import * as faker from "faker";
 
 import Carrier from "../../entities/carrier.entity";
-import { Connection } from "typeorm";
 import FactoringCompany from "../../entities/factoringcompany.entity";
 import FactoringCompanySeed from "./factoringcompany.seed";
+import PaymentMethod from "../../entities/paymentmethod.entity";
+import PaymentMethodService from "../../../services/paymentmethod.service";
+import { getManager } from "typeorm";
 
+export interface CarrierSeedProps {
+  factoringCompany?: FactoringCompany;
+  paymentMethod?: PaymentMethod;
+  paymentTerms?: string;
+}
 export default class CarrierSeed {
-  db: Connection;
+  async default(): Promise<void> {
+    const fc = (await new FactoringCompanySeed().with({}))[0];
+    const carrier = await this.getFakeCarrier(fc);
 
-  constructor(db: Connection) {
-    this.db = db;
+    await getManager().save(carrier);
   }
 
-  async one(): Promise<Carrier> {
-    const fc = await this.createFC();
-    const carrier = this.getFakeCarrier(fc);
-
-    return this.db.manager.save(carrier);
+  async one(props: CarrierSeedProps = {}): Promise<Carrier> {
+    return (await this.with(props))[0];
   }
 
-  async many(count = 10): Promise<Carrier[]> {
-    const carriers = [];
-    for (let index = 0; index < count; index++) {
-      const fc = await this.createFC();
-      carriers.push(this.getFakeCarrier(fc));
+  async with(props: CarrierSeedProps = {}, count = 1): Promise<Carrier[]> {
+    const carriers: Carrier[] = [];
+    const fcSeed = new FactoringCompanySeed();
+    for (let i = 0; i < count; i++) {
+      const { factoringCompany: _fc } = props;
+      const fc = _fc ? _fc : await fcSeed.one();
+      let carrier = await this.getFakeCarrier(fc);
+      carrier = Object.assign(carrier, props);
+      carriers.push(carrier);
     }
 
-    return this.db.manager.save(carriers);
+    console.log(carriers);
+    return await getManager().save(carriers);
   }
 
-  private async createFC(): Promise<FactoringCompany> {
-    const fcSeed = new FactoringCompanySeed(this.db);
-    return fcSeed.one();
-  }
-
-  getFakeCarrier(fc: FactoringCompany): Carrier {
+  async getFakeCarrier(fc: FactoringCompany): Promise<Carrier> {
     const carrier = new Carrier();
     carrier.name = faker.company.companyName();
     carrier.displayId = faker.datatype.string();
     carrier.factoringCompany = fc;
     carrier.paymentTerms = faker.datatype.string();
+
+    const pmSvc = PaymentMethodService.getInstance();
+    const pm = await pmSvc.getRandom();
+    fc.paymentMethod = pm;
 
     return carrier;
   }
