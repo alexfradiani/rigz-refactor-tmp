@@ -29,13 +29,16 @@ module.exports = {
     "require-jsdoc": "off",
     "comma-dangle": "off",
     "object-curly-spacing": [0, "always"],
-    indent: ["error", 2],
+    indent: ["error", 2, { SwitchCase: 1 }],
     "new-cap": 0,
     "no-empty-function": "off",
     "@typescript-eslint/no-empty-function": "off",
     "valid-jsdoc": "off",
     "padded-blocks": "off",
     "no-trailing-spaces": "off",
-    "operator-linebreak": "off"
+    "operator-linebreak": "off",
+    "guard-for-in": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   }
 };

@@ -1,31 +1,35 @@
 import * as faker from "faker";
 
-import { Connection } from "typeorm";
 import FinancialTransaction from "../../entities/financialtransaction.entity";
 import Load from "../../entities/load.entity";
+import LoadSeed from "./load.seed";
+import { getManager } from "typeorm";
+
+interface FTSeeedProps {
+  carrierAmount?: number;
+  carrierCBAmount?: number;
+  carrierPending?: number;
+  customerAmount?: number;
+  date?: Date;
+  loadProfitAmount?: number;
+  load?: Load;
+  type?: string;
+}
 
 export default class FinancialTransactionSeed {
-  db: Connection;
+  async default(): Promise<void> {}
 
-  constructor(db: Connection) {
-    this.db = db;
-  }
-
-  async one(): Promise<void> {
-    // TODO
-  }
-
-  async many(): Promise<void> {
-    // TODO
-  }
-
-  async withLoad(load: Load, count = 10): Promise<FinancialTransaction[]> {
+  async with(props: FTSeeedProps, count = 1): Promise<FinancialTransaction[]> {
     const fts = [];
     for (let index = 0; index < count; index++) {
-      fts.push(this.getFakeTransaction(load));
+      const { load: lo } = props;
+      const load = lo ? lo : (await new LoadSeed().with({}))[0];
+      let ft = this.getFakeTransaction(load);
+      ft = Object.assign(ft, props);
+      fts.push(ft);
     }
 
-    return await this.db.manager.save(fts);
+    return await getManager().save(fts);
   }
 
   getFakeTransaction(load: Load): FinancialTransaction {

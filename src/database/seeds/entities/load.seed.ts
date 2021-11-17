@@ -2,57 +2,47 @@ import * as faker from "faker";
 
 import Carrier from "../../entities/carrier.entity";
 import CarrierSeed from "./carrier.seed";
-import { Connection } from "typeorm";
+import FactoringCompany from "../../entities/factoringcompany.entity";
 import Load from "../../entities/load.entity";
+import { getManager } from "typeorm";
 
+export interface LoadSeedProps {
+  factoringCompany?: FactoringCompany;
+  carrier?: Carrier;
+  doNotPayFactoring?: boolean;
+  isActive?: boolean;
+}
 export default class LoadSeed {
-  db: Connection;
+  async default(): Promise<void> {
+    const carrier = (await new CarrierSeed().with({}))[0];
+    const load = this.getFakeLoad(carrier);
 
-  constructor(db: Connection) {
-    this.db = db;
+    await getManager().save(load);
   }
 
-  async one(): Promise<Load> {
-    const load = new Load();
-    load.carrierFee = faker.datatype.number();
-    load.isActive = true;
-    load.carrier = await this.createCarrier();
-
-    return this.db.manager.save(load);
+  async one(props: LoadSeedProps): Promise<Load> {
+    return (await this.with(props))[0];
   }
 
-  async many(count = 10): Promise<Load[]> {
-    const loads = [];
+  async with(props: LoadSeedProps, count = 1): Promise<Load[]> {
+    const loads: Load[] = [];
+    const carrierSeed = new CarrierSeed();
     for (let i = 0; i < count; i++) {
-      const carrier = await this.createCarrier();
-      const load = this.getFakeLoad(carrier);
+      const { carrier: ca } = props;
+      const carrier = ca ? ca : await carrierSeed.one();
+      let load = this.getFakeLoad(carrier);
+      load = Object.assign(load, props);
       loads.push(load);
     }
-
-    return await this.db.manager.save(loads);
+    return getManager().save(loads);
   }
 
-  async withCarrier(carrier: Carrier, count = 10): Promise<Load[]> {
-    const loads = [];
-    for (let i = 0; i < count; i++) {
-      const load = this.getFakeLoad(carrier);
-      loads.push(load);
-    }
-
-    return this.db.manager.save(loads);
-  }
-
-  async createCarrier(): Promise<Carrier> {
-    const carrierSeed = new CarrierSeed(this.db);
-    return carrierSeed.one();
-  }
-
-  getFakeLoad(carrier: Carrier, isActive = true): Load {
+  getFakeLoad(carrier: Carrier): Load {
     const load = new Load();
 
     load.carrierFee = faker.datatype.number();
     load.carrier = carrier;
-    load.isActive = isActive;
+    load.isActive = true;
     load.dueDate = faker.datatype.datetime();
 
     return load;

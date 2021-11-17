@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn
 } from "typeorm";
 
-import Load from "./load.entity";
+import Carrier from "./carrier.entity";
 
 @Entity()
 export default class User {
@@ -19,7 +19,7 @@ export default class User {
   @Column()
   role: string;
 
-  @OneToOne(() => Load)
+  @OneToOne(() => Carrier)
   @JoinColumn()
-  processingLoad: Load;
+  processingCarrier: Carrier;
 }
